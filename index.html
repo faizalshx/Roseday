@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Deepali 🌹</title>
+    <style>
+        :root {
+            --rose-pink: #ff4d6d;
+            --rose-dark: #c9184a;
+            --gold: #ffb703;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background: #0a0908;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            touch-action: manipulation;
+        }
+
+        /* Title Style */
+        .header {
+            position: absolute; top: 10%; width: 100%; text-align: center;
+            color: white; z-index: 5; pointer-events: none;
+        }
+
+        /* Flower Animation */
+        .flower {
+            position: absolute; transform: translate(-50%, -50%);
+            font-size: 2rem; animation: grow-spin 2.5s ease-out forwards;
+            pointer-events: none; z-index: 2;
+        }
+
+        @keyframes grow-spin {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+            30% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5) rotate(360deg); opacity: 0.8; }
+        }
+
+        /* Buttons Area */
+        .controls {
+            position: absolute; bottom: 30px; width: 100%;
+            display: flex; justify-content: center; gap: 15px; z-index: 10;
+        }
+
+        button {
+            padding: 12px 20px; border: none; border-radius: 50px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        #autoBtn { background: var(--rose-pink); color: white; }
+        #hiddenBtn { background: var(--gold); color: #333; }
+
+        /* Pop-up Card Style */
+        .modal {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); width: 85%; max-width: 400px;
+            background: white; padding: 30px; border-radius: 20px;
+            text-align: center; z-index: 100; box-shadow: 0 0 50px rgba(255, 77, 109, 0.5);
+        }
+
+        .modal h2 { color: var(--rose-dark); margin-top: 0; }
+        .modal p { line-height: 1.6; color: #444; }
+        .close-btn { 
+            margin-top: 15px; background: var(--rose-pink); color: white; 
+            border: none; padding: 8px 20px; border-radius: 5px;
+        }
+
+        /* Overlay */
+        #overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%;
+            height: 100%; background: rgba(0,0,0,0.7); z-index: 90;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2 style="color: var(--rose-pink);">Happy Rose Day, Deepali! 🌹</h2>
+        <p>Door hoon par dil ke paas hoon...</p>
+    </div>
+
+    <div id="garden"></div>
+
+    <div class="controls">
+        <button id="autoBtn">✨ Magic Auto Bloom</button>
+        <button id="hiddenBtn">🎁 Tap for Hidden Message</button>
+    </div>
+
+    <div id="overlay"></div>
+
+    <div id="rosePopUp" class="modal">
+        <h2>🌹 Happy Rose Day! 🌹</h2>
+        <p>Deepali, main tumhare liye asli phool toh nahi la sakta par is digital garden ka har ek phool meri mohabbat ki nishani hai.</p>
+        <button class="close-btn" onclick="closeModal('rosePopUp')">Keep Planting 🌸</button>
+    </div>
+
+    <div id="loveNote" class="modal">
+        <div style="font-size: 3rem;">💌</div>
+        <h2>For My Deepali</h2>
+        <p>I Love You so much! ❤️<br><br>
+        Distance sirf ek number hai jab pyaar saccha ho. Ye phool hamesha khile rahenge, bilkul mere dil ki tarah. You are my forever rose.</p>
+        <p>— Yours Always</p>
+        <button class="close-btn" onclick="location.reload()">Reset Garden ✨</button>
+    </div>
+
+    <script>
+        const garden = document.getElementById('garden');
+        const flowers = ['🌹', '🌸', '💐', '🌺', '🌷', '✨'];
+        let autoInterval;
+
+        // Function to plant flower
+        function plant(x, y) {
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            flower.style.left = x + 'px';
+            flower.style.top = y + 'px';
+            flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+            garden.appendChild(flower);
+            
+            // Remove after some time to keep page smooth
+            setTimeout(() => flower.remove(), 5000);
+        }
+
+        // Tap to plant
+        window.addEventListener('click', (e) => {
+            if(e.target.tagName !== 'BUTTON') {
+                plant(e.clientX, e.clientY);
+            }
+        });
+
+        // Auto Bloom
+        document.getElementById('autoBtn').addEventListener('click', () => {
+            if(!autoInterval) {
+                autoInterval = setInterval(() => {
+                    plant(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+                }, 200);
+                document.getElementById('autoBtn').innerText = "Stop Magic";
+            } else {
+                clearInterval(autoInterval);
+                autoInterval = null;
+                document.getElementById('autoBtn').innerText = "✨ Magic Auto Bloom";
+            }
+        });
+
+        // 8-10 Seconds Rose Day Pop-up
+        setTimeout(() => {
+            showModal('rosePopUp');
+        }, 9000);
+
+        // Hidden Message Logic
+        document.getElementById('hiddenBtn').addEventListener('click', () => {
+            // Burst of flowers
+            for(let i=0; i<50; i++) {
+                setTimeout(() => {
+                    plant(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+                }, i * 20);
+            }
+            setTimeout(() => showModal('loveNote'), 1500);
+        });
+
+        function showModal(id) {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal(id) {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
+</body>
+</html>
