@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Deepali 🌸</title>
+    <title>For My Deepali 🌹</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
@@ -16,24 +16,63 @@
             color: #ff75a0; z-index: 100; pointer-events: none;
         }
 
-        /* Flower SVG Styling */
-        .flower {
+        /* Plant Container */
+        .plant {
             position: absolute;
-            width: 100px; height: 100px;
-            transform: translate(-50%, -50%);
-            animation: bloom 3s ease-out forwards;
+            transform: translateX(-50%);
+            bottom: auto; /* Positioned relative to click */
+        }
+
+        /* Stem Animation */
+        .stem {
+            width: 4px;
+            background: #2d6a4f;
+            margin: 0 auto;
+            height: 0;
+            animation: growStem 1.5s ease-out forwards;
+        }
+
+        @keyframes growStem {
+            from { height: 0; }
+            to { height: 80px; }
+        }
+
+        /* Leaves Animation */
+        .leaf {
+            width: 20px; height: 10px;
+            background: #40916c;
+            border-radius: 20px 0;
+            position: absolute;
+            opacity: 0;
+            animation: growLeaf 0.5s ease-out 0.8s forwards;
+        }
+        .leaf.right { transform: rotate(45deg); left: 4px; top: 40px; }
+        .leaf.left { transform: rotate(-135deg); right: 4px; top: 55px; }
+
+        @keyframes growLeaf {
+            from { opacity: 0; transform: scale(0) rotate(var(--rot)); }
+            to { opacity: 1; transform: scale(1) rotate(var(--rot)); }
+        }
+
+        /* Flower Bloom */
+        .flower-head {
+            position: absolute;
+            top: -15px; left: 50%;
+            transform: translateX(-50%) scale(0);
+            animation: bloom 1s ease-out 1.5s forwards;
         }
 
         @keyframes bloom {
-            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1.2) rotate(45deg); opacity: 0.8; }
+            to { transform: translateX(-50%) scale(1); }
         }
 
-        .petal { fill: #ff4d6d; }
-        .center { fill: #ffb703; }
+        .petal {
+            position: absolute; width: 25px; height: 25px;
+            background: #ff4d6d; border-radius: 50% 50% 0 50%;
+            transform-origin: bottom right;
+        }
 
-        /* Buttons */
+        /* Buttons & UI */
         .controls {
             position: absolute; bottom: 30px; width: 100%;
             display: flex; justify-content: center; gap: 10px; z-index: 200;
@@ -44,119 +83,103 @@
             backdrop-filter: blur(5px); font-weight: bold;
         }
 
-        /* Modal / Message Card */
         .modal {
             display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); width: 80%; max-width: 350px;
-            background: white; border-radius: 20px; padding: 30px;
-            text-align: center; z-index: 1000; border: 5px solid #ff4d6d;
+            transform: translate(-50%, -50%); width: 85%; max-width: 350px;
+            background: white; border-radius: 20px; padding: 25px;
+            text-align: center; z-index: 1000; border: 4px solid #ff4d6d;
         }
         .overlay {
             display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 900;
         }
-        .heart { color: #ff4d6d; font-size: 40px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>For My Deepali 🌹</h1>
-        <p>Screen par kahin bhi click karein...</p>
+        <h1>For Deepali 🌸</h1>
+        <p>Kahin bhi click karein pauda ugane ke liye...</p>
     </div>
 
     <div id="garden"></div>
 
     <div class="controls">
         <button id="autoBtn">✨ Auto Bloom</button>
-        <button id="msgBtn">🎁 Hidden Message</button>
+        <button id="msgBtn">🎁 Special Message</button>
     </div>
 
     <div class="overlay" id="overlay"></div>
 
-    <div id="roseModal" class="modal">
-        <div class="heart">🌹</div>
-        <h2>Happy Rose Day, Deepali!</h2>
-        <p>Tumhare liye ye phool jo kabhi nahi murjhayenge. Bilkul mere pyaar ki tarah!</p>
-        <button onclick="closeModal()" style="background:#ff4d6d; color:white;">Love it!</button>
-    </div>
-
     <div id="loveNote" class="modal">
-        <div class="heart">❤️</div>
-        <h2>Deepali, I Love You!</h2>
-        <p>Main jaanta hoon hum door hain, par mera har ek khayal tumhare paas hai. You are the most beautiful flower in my life. 💌</p>
-        <button onclick="location.reload()" style="background:black; color:white;">Plant More</button>
+        <h2 style="color:#ff4d6d">I Love You, Deepali! ❤️</h2>
+        <p>Door hoon par ye garden hamesha hamare pyaar ki tarah khilta rahega. Happy Rose Day!</p>
+        <button onclick="location.reload()" style="background:black; color:white; border:none; padding:10px 20px; border-radius:5px;">Plant More 🌹</button>
     </div>
 
     <script>
         const garden = document.getElementById('garden');
-        const petalColors = ['#ff4d6d', '#ff75a0', '#ff85a1', '#f08080', '#ffb3c1'];
 
-        function createFlower(x, y) {
-            const color = petalColors[Math.floor(Math.random() * petalColors.length)];
-            const svg = `
-                <svg class="flower" viewBox="0 0 100 100">
-                    <circle class="center" cx="50" cy="50" r="10"/>
-                    <ellipse class="petal" cx="50" cy="25" rx="15" ry="25" style="fill:${color}"/>
-                    <ellipse class="petal" cx="50" cy="75" rx="15" ry="25" style="fill:${color}"/>
-                    <ellipse class="petal" cx="25" cy="50" rx="25" ry="15" style="fill:${color}"/>
-                    <ellipse class="petal" cx="75" cy="50" rx="25" ry="15" style="fill:${color}"/>
-                    <ellipse class="petal" cx="32" cy="32" rx="15" ry="20" style="fill:${color}; transform: rotate(-45deg); transform-origin: 32px 32px;"/>
-                    <ellipse class="petal" cx="68" cy="68" rx="15" ry="20" style="fill:${color}; transform: rotate(-45deg); transform-origin: 68px 68px;"/>
-                </svg>
-            `;
-            const div = document.createElement('div');
-            div.innerHTML = svg;
-            const flowerEl = div.querySelector('svg');
-            flowerEl.style.left = x + 'px';
-            flowerEl.style.top = y + 'px';
-            garden.appendChild(flowerEl);
+        function createPlant(x, y) {
+            const plant = document.createElement('div');
+            plant.className = 'plant';
+            plant.style.left = x + 'px';
+            plant.style.top = (y - 80) + 'px'; // Adjust so flower ends up where clicked
 
-            setTimeout(() => flowerEl.remove(), 6000);
+            const stem = document.createElement('div');
+            stem.className = 'stem';
+
+            const leafL = document.createElement('div');
+            leafL.className = 'leaf left';
+            leafL.style.setProperty('--rot', '-135deg');
+
+            const leafR = document.createElement('div');
+            leafR.className = 'leaf right';
+            leafR.style.setProperty('--rot', '45deg');
+
+            const flowerHead = document.createElement('div');
+            flowerHead.className = 'flower-head';
+            
+            // Create 4 petals
+            for(let i=0; i<4; i++) {
+                const p = document.createElement('div');
+                p.className = 'petal';
+                p.style.transform = `rotate(${i * 90}deg)`;
+                flowerHead.appendChild(p);
+            }
+
+            const center = document.createElement('div');
+            center.style = "width:10px; height:10px; background:#ffb703; border-radius:50%; position:absolute; top:12px; left:12px; z-index:5;";
+            flowerHead.appendChild(center);
+
+            plant.appendChild(flowerHead);
+            plant.appendChild(leafL);
+            plant.appendChild(leafR);
+            plant.appendChild(stem);
+            garden.appendChild(plant);
+
+            // Cleanup
+            setTimeout(() => {
+                plant.style.transition = "opacity 2s";
+                plant.style.opacity = "0";
+                setTimeout(() => plant.remove(), 2000);
+            }, 8000);
         }
 
-        window.addEventListener('click', (e) => {
-            if(e.target.tagName !== 'BUTTON') {
-                createFlower(e.clientX, e.clientY);
-            }
+        window.addEventListener('mousedown', (e) => {
+            if(e.target.tagName !== 'BUTTON') createPlant(e.clientX, e.clientY);
         });
 
-        // Auto Bloom
-        let autoInt;
         document.getElementById('autoBtn').onclick = () => {
-            if(!autoInt) {
-                autoInt = setInterval(() => {
-                    createFlower(Math.random()*window.innerWidth, Math.random()*window.innerHeight);
-                }, 300);
-                document.getElementById('autoBtn').innerText = "Stop Magic";
-            } else {
-                clearInterval(autoInt);
-                autoInt = null;
-                document.getElementById('autoBtn').innerText = "✨ Auto Bloom";
-            }
-        };
-
-        // 9 Second Rose Day Popup
-        setTimeout(() => {
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('roseModal').style.display = 'block';
-        }, 9000);
-
-        // Message Button
-        document.getElementById('msgBtn').onclick = () => {
-            for(let i=0; i<30; i++) {
-                setTimeout(() => createFlower(Math.random()*window.innerWidth, Math.random()*window.innerHeight), i*50);
-            }
-            setTimeout(() => {
-                document.getElementById('overlay').style.display = 'block';
-                document.getElementById('loveNote').style.display = 'block';
+            setInterval(() => {
+                createPlant(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
             }, 1000);
         };
 
-        function closeModal() {
-            document.getElementById('overlay').style.display = 'none';
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-        }
+        document.getElementById('msgBtn').onclick = () => {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('loveNote').style.display = 'block';
+        };
     </script>
 </body>
 </html>
