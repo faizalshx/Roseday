@@ -1,173 +1,151 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For My Deepali 🌹</title>
+    <title>For Deepali 🌸</title>
     <style>
         :root {
-            --rose-pink: #ff4d6d;
-            --rose-dark: #c9184a;
-            --gold: #ffb703;
+            --primary: #ff4d6d;
+            --secondary: #ffb703;
         }
-
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; background: #0a0908;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            touch-action: manipulation;
+            font-family: 'Poppins', sans-serif;
+            touch-action: none;
         }
-
-        /* Title Style */
-        .header {
-            position: absolute; top: 10%; width: 100%; text-align: center;
-            color: white; z-index: 5; pointer-events: none;
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        
+        .ui {
+            position: absolute; top: 15%; width: 100%; text-align: center;
+            color: white; pointer-events: none; z-index: 10;
         }
+        h1 { font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 15px rgba(255,77,109,0.5); margin: 0; }
+        p { opacity: 0.8; font-size: 0.9rem; }
 
-        /* Flower Animation */
-        .flower {
-            position: absolute; transform: translate(-50%, -50%);
-            font-size: 2rem; animation: grow-spin 2.5s ease-out forwards;
-            pointer-events: none; z-index: 2;
+        .btn-container {
+            position: absolute; bottom: 40px; width: 100%;
+            display: flex; justify-content: center; gap: 10px; z-index: 100;
         }
-
-        @keyframes grow-spin {
-            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
-            30% { opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1.5) rotate(360deg); opacity: 0.8; }
-        }
-
-        /* Buttons Area */
-        .controls {
-            position: absolute; bottom: 30px; width: 100%;
-            display: flex; justify-content: center; gap: 15px; z-index: 10;
-        }
-
         button {
-            padding: 12px 20px; border: none; border-radius: 50px;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            padding: 12px 18px; border: none; border-radius: 50px;
+            font-weight: bold; cursor: pointer; background: rgba(255,255,255,0.1);
+            color: white; backdrop-filter: blur(10px); border: 1px solid var(--primary);
         }
+        #hiddenBtn { border-color: var(--secondary); color: var(--secondary); }
 
-        #autoBtn { background: var(--rose-pink); color: white; }
-        #hiddenBtn { background: var(--gold); color: #333; }
-
-        /* Pop-up Card Style */
+        /* Popups */
         .modal {
-            display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); width: 85%; max-width: 400px;
-            background: white; padding: 30px; border-radius: 20px;
-            text-align: center; z-index: 100; box-shadow: 0 0 50px rgba(255, 77, 109, 0.5);
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; max-width: 350px; background: white; border-radius: 20px;
+            padding: 25px; text-align: center; z-index: 1000; box-shadow: 0 0 30px var(--primary);
         }
-
-        .modal h2 { color: var(--rose-dark); margin-top: 0; }
-        .modal p { line-height: 1.6; color: #444; }
-        .close-btn { 
-            margin-top: 15px; background: var(--rose-pink); color: white; 
-            border: none; padding: 8px 20px; border-radius: 5px;
+        .modal h2 { color: var(--primary); margin: 0; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 900; }
+        
+        /* Flower Animation */
+        .flower-pop {
+            position: absolute; transform: translate(-50%, -50%);
+            pointer-events: none; animation: grow 3s ease-out forwards;
         }
-
-        /* Overlay */
-        #overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%;
-            height: 100%; background: rgba(0,0,0,0.7); z-index: 90;
+        @keyframes grow {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5) rotate(45deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2 style="color: var(--rose-pink);">Happy Rose Day, Deepali! 🌹</h2>
-        <p>Door hoon par dil ke paas hoon...</p>
+    <div class="ui">
+        <h1>For Deepali 🌸</h1>
+        <p>Tap anywhere to plant a flower</p>
     </div>
 
     <div id="garden"></div>
 
-    <div class="controls">
-        <button id="autoBtn">✨ Magic Auto Bloom</button>
-        <button id="hiddenBtn">🎁 Tap for Hidden Message</button>
+    <div class="btn-container">
+        <button id="autoBtn">✨ Auto Bloom</button>
+        <button id="hiddenBtn">🎁 See Message</button>
     </div>
 
-    <div id="overlay"></div>
+    <div class="overlay" id="overlay"></div>
 
-    <div id="rosePopUp" class="modal">
-        <h2>🌹 Happy Rose Day! 🌹</h2>
-        <p>Deepali, main tumhare liye asli phool toh nahi la sakta par is digital garden ka har ek phool meri mohabbat ki nishani hai.</p>
-        <button class="close-btn" onclick="closeModal('rosePopUp')">Keep Planting 🌸</button>
+    <div id="roseDayModal" class="modal">
+        <h2>🌹 Happy Rose Day!</h2>
+        <p>Deepali, ye digital phool hamesha tumhare liye khile rahenge.</p>
+        <button onclick="closeModals()" style="background: var(--primary); color: white; border: none; margin-top: 15px;">🌸 Beautiful!</button>
     </div>
 
-    <div id="loveNote" class="modal">
-        <div style="font-size: 3rem;">💌</div>
-        <h2>For My Deepali</h2>
-        <p>I Love You so much! ❤️<br><br>
-        Distance sirf ek number hai jab pyaar saccha ho. Ye phool hamesha khile rahenge, bilkul mere dil ki tarah. You are my forever rose.</p>
-        <p>— Yours Always</p>
-        <button class="close-btn" onclick="location.reload()">Reset Garden ✨</button>
+    <div id="loveCard" class="modal">
+        <h2 style="font-size: 3rem;">💌</h2>
+        <h2>I Love You, Deepali!</h2>
+        <p>Door hoon par ye phool batayenge ki tum mere liye kitni special ho. Happy Rose Day My Love! ❤️</p>
+        <button onclick="location.reload()" style="background: black; color: white; border: none; margin-top: 15px;">Grow More 🌷</button>
     </div>
 
     <script>
         const garden = document.getElementById('garden');
-        const flowers = ['🌹', '🌸', '💐', '🌺', '🌷', '✨'];
-        let autoInterval;
+        const flowers = ['🌹', '🌸', '🌺', '🌷', '🌻', '🌼'];
+        let autoInterval = null;
 
-        // Function to plant flower
-        function plant(x, y) {
-            const flower = document.createElement('div');
-            flower.className = 'flower';
-            flower.style.left = x + 'px';
-            flower.style.top = y + 'px';
-            flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
-            garden.appendChild(flower);
-            
-            // Remove after some time to keep page smooth
-            setTimeout(() => flower.remove(), 5000);
+        function createFlower(x, y) {
+            const f = document.createElement('div');
+            f.className = 'flower-pop';
+            f.style.left = x + 'px';
+            f.style.top = y + 'px';
+            f.style.fontSize = (Math.random() * 20 + 25) + 'px';
+            f.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+            garden.appendChild(f);
+            setTimeout(() => f.remove(), 3000);
         }
 
-        // Tap to plant
-        window.addEventListener('click', (e) => {
+        window.addEventListener('touchstart', (e) => {
             if(e.target.tagName !== 'BUTTON') {
-                plant(e.clientX, e.clientY);
+                createFlower(e.touches[0].clientX, e.touches[0].clientY);
             }
         });
 
-        // Auto Bloom
-        document.getElementById('autoBtn').addEventListener('click', () => {
+        window.addEventListener('mousedown', (e) => {
+            if(e.target.tagName !== 'BUTTON') {
+                createFlower(e.clientX, e.clientY);
+            }
+        });
+
+        document.getElementById('autoBtn').onclick = () => {
             if(!autoInterval) {
                 autoInterval = setInterval(() => {
-                    plant(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
-                }, 200);
+                    createFlower(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+                }, 150);
                 document.getElementById('autoBtn').innerText = "Stop Magic";
             } else {
                 clearInterval(autoInterval);
                 autoInterval = null;
-                document.getElementById('autoBtn').innerText = "✨ Magic Auto Bloom";
+                document.getElementById('autoBtn').innerText = "✨ Auto Bloom";
             }
-        });
+        };
 
-        // 8-10 Seconds Rose Day Pop-up
+        // Rose Day Pop up after 9 seconds
         setTimeout(() => {
-            showModal('rosePopUp');
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('roseDayModal').style.display = 'block';
         }, 9000);
 
-        // Hidden Message Logic
-        document.getElementById('hiddenBtn').addEventListener('click', () => {
-            // Burst of flowers
-            for(let i=0; i<50; i++) {
-                setTimeout(() => {
-                    plant(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
-                }, i * 20);
+        document.getElementById('hiddenBtn').onclick = () => {
+            for(let i=0; i<40; i++) {
+                setTimeout(() => createFlower(Math.random() * window.innerWidth, Math.random() * window.innerHeight), i * 30);
             }
-            setTimeout(() => showModal('loveNote'), 1500);
-        });
+            setTimeout(() => {
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('loveCard').style.display = 'block';
+            }, 1000);
+        };
 
-        function showModal(id) {
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById(id).style.display = 'block';
-        }
-
-        function closeModal(id) {
+        function closeModals() {
             document.getElementById('overlay').style.display = 'none';
-            document.getElementById(id).style.display = 'none';
+            document.getElementById('roseDayModal').style.display = 'none';
+            document.getElementById('loveCard').style.display = 'none';
         }
     </script>
 </body>
