@@ -3,183 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For My Deepali 🌹</title>
+    <title>Flower Garden for Deepali</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background: #0a0908;
-            font-family: 'Arial', sans-serif;
+            background: #000; overflow: hidden; font-family: sans-serif;
         }
 
-        .header {
-            position: absolute; top: 10%; width: 100%; text-align: center;
-            color: #ff75a0; z-index: 100; pointer-events: none;
-        }
+        #garden-container { position: relative; width: 100%; height: 100%; }
 
-        /* Plant Container */
-        .plant {
-            position: absolute;
-            transform: translateX(-50%);
-            bottom: auto; /* Positioned relative to click */
-        }
-
-        /* Stem Animation */
+        /* Stem Styling */
         .stem {
-            width: 4px;
-            background: #2d6a4f;
-            margin: 0 auto;
-            height: 0;
-            animation: growStem 1.5s ease-out forwards;
+            position: absolute;
+            background: linear-gradient(to top, #1a4301, #2d6a4f);
+            width: 3px;
+            bottom: 0;
+            transform-origin: bottom center;
+            border-radius: 5px;
+            animation: growStem 2s ease-out forwards;
         }
 
         @keyframes growStem {
-            from { height: 0; }
-            to { height: 80px; }
+            from { height: 0; opacity: 0; transform: scaleX(0.5) rotate(var(--r)); }
+            to { height: var(--h); opacity: 1; transform: scaleX(1) rotate(var(--r)); }
         }
 
-        /* Leaves Animation */
-        .leaf {
-            width: 20px; height: 10px;
-            background: #40916c;
-            border-radius: 20px 0;
-            position: absolute;
-            opacity: 0;
-            animation: growLeaf 0.5s ease-out 0.8s forwards;
-        }
-        .leaf.right { transform: rotate(45deg); left: 4px; top: 40px; }
-        .leaf.left { transform: rotate(-135deg); right: 4px; top: 55px; }
-
-        @keyframes growLeaf {
-            from { opacity: 0; transform: scale(0) rotate(var(--rot)); }
-            to { opacity: 1; transform: scale(1) rotate(var(--rot)); }
-        }
-
-        /* Flower Bloom */
+        /* Flower Head Styling (Glow Effect) */
         .flower-head {
             position: absolute;
-            top: -15px; left: 50%;
-            transform: translateX(-50%) scale(0);
+            top: 0; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
             animation: bloom 1s ease-out 1.5s forwards;
         }
 
         @keyframes bloom {
-            to { transform: translateX(-50%) scale(1); }
+            to { transform: translate(-50%, -50%) scale(1.2); }
         }
 
         .petal {
-            position: absolute; width: 25px; height: 25px;
-            background: #ff4d6d; border-radius: 50% 50% 0 50%;
-            transform-origin: bottom right;
+            position: absolute;
+            width: 40px; height: 60px;
+            background: var(--c);
+            border-radius: 50% 50% 10% 10%;
+            filter: blur(1px);
+            opacity: 0.8;
+            box-shadow: 0 0 15px var(--c);
+            transform-origin: bottom center;
         }
 
-        /* Buttons & UI */
+        /* UI Buttons (Matching Screenshot) */
         .controls {
-            position: absolute; bottom: 30px; width: 100%;
-            display: flex; justify-content: center; gap: 10px; z-index: 200;
-        }
-        button {
-            padding: 12px 20px; border: 2px solid #ff4d6d; border-radius: 50px;
-            background: rgba(0,0,0,0.5); color: white; cursor: pointer;
-            backdrop-filter: blur(5px); font-weight: bold;
+            position: fixed; bottom: 40px; width: 100%;
+            display: flex; justify-content: center; gap: 15px; z-index: 100;
         }
 
+        button {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white; padding: 12px 25px; border-radius: 30px;
+            backdrop-filter: blur(10px); font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* Hidden Message Card */
         .modal {
             display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); width: 85%; max-width: 350px;
+            transform: translate(-50%, -50%); width: 80%; max-width: 300px;
             background: white; border-radius: 20px; padding: 25px;
-            text-align: center; z-index: 1000; border: 4px solid #ff4d6d;
+            text-align: center; z-index: 1000; box-shadow: 0 0 40px #ff4d6d;
         }
-        .overlay {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 900;
-        }
+        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:900; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>For Deepali 🌸</h1>
-        <p>Kahin bhi click karein pauda ugane ke liye...</p>
-    </div>
-
-    <div id="garden"></div>
+    <div id="garden-container"></div>
 
     <div class="controls">
+        <button onclick="clearGarden()">🪄 Clear Garden</button>
         <button id="autoBtn">✨ Auto Bloom</button>
-        <button id="msgBtn">🎁 Special Message</button>
+        <button id="msgBtn" style="border-color: #ff4d6d;">🎁 Hidden Note</button>
     </div>
 
     <div class="overlay" id="overlay"></div>
-
     <div id="loveNote" class="modal">
-        <h2 style="color:#ff4d6d">I Love You, Deepali! ❤️</h2>
-        <p>Door hoon par ye garden hamesha hamare pyaar ki tarah khilta rahega. Happy Rose Day!</p>
-        <button onclick="location.reload()" style="background:black; color:white; border:none; padding:10px 20px; border-radius:5px;">Plant More 🌹</button>
+        <h2 style="color:#ff4d6d">For Deepali ❤️</h2>
+        <p>Door hoon par mera har ek khayal tumhare paas hai. Happy Rose Day My Love!</p>
+        <button onclick="closeModal()" style="background:#000; color:#fff; border:none; width:100%; margin-top:10px;">Close</button>
     </div>
 
     <script>
-        const garden = document.getElementById('garden');
+        const container = document.getElementById('garden-container');
+        const colors = ['#ff4d6d', '#ff75a0', '#c8b6ff', '#ffd6ff', '#ffb703'];
 
-        function createPlant(x, y) {
-            const plant = document.createElement('div');
-            plant.className = 'plant';
-            plant.style.left = x + 'px';
-            plant.style.top = (y - 80) + 'px'; // Adjust so flower ends up where clicked
+        function createFlower(x) {
+            const flower = document.createElement('div');
+            flower.className = 'plant';
+            
+            // Random Height and Rotation for Stem
+            const height = Math.random() * 50 + 40; // 40% to 90% of screen
+            const rotation = (Math.random() - 0.5) * 15; // Slight curve
 
             const stem = document.createElement('div');
             stem.className = 'stem';
-
-            const leafL = document.createElement('div');
-            leafL.className = 'leaf left';
-            leafL.style.setProperty('--rot', '-135deg');
-
-            const leafR = document.createElement('div');
-            leafR.className = 'leaf right';
-            leafR.style.setProperty('--rot', '45deg');
+            stem.style.left = x + 'px';
+            stem.style.setProperty('--h', height + 'vh');
+            stem.style.setProperty('--r', rotation + 'deg');
 
             const flowerHead = document.createElement('div');
             flowerHead.className = 'flower-head';
-            
-            // Create 4 petals
-            for(let i=0; i<4; i++) {
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            // Create 6 petals for a full look
+            for(let i=0; i<6; i++) {
                 const p = document.createElement('div');
                 p.className = 'petal';
-                p.style.transform = `rotate(${i * 90}deg)`;
+                p.style.setProperty('--c', color);
+                p.style.transform = `rotate(${i * 60}deg)`;
                 flowerHead.appendChild(p);
             }
 
-            const center = document.createElement('div');
-            center.style = "width:10px; height:10px; background:#ffb703; border-radius:50%; position:absolute; top:12px; left:12px; z-index:5;";
-            flowerHead.appendChild(center);
+            stem.appendChild(flowerHead);
+            container.appendChild(stem);
 
-            plant.appendChild(flowerHead);
-            plant.appendChild(leafL);
-            plant.appendChild(leafR);
-            plant.appendChild(stem);
-            garden.appendChild(plant);
-
-            // Cleanup
+            // Auto-clean old flowers
             setTimeout(() => {
-                plant.style.transition = "opacity 2s";
-                plant.style.opacity = "0";
-                setTimeout(() => plant.remove(), 2000);
-            }, 8000);
+                stem.style.opacity = '0';
+                stem.style.transition = '2s';
+                setTimeout(() => stem.remove(), 2000);
+            }, 10000);
         }
 
-        window.addEventListener('mousedown', (e) => {
-            if(e.target.tagName !== 'BUTTON') createPlant(e.clientX, e.clientY);
+        window.addEventListener('click', (e) => {
+            if(e.target.tagName !== 'BUTTON') createFlower(e.clientX);
         });
 
+        function clearGarden() { container.innerHTML = ''; }
+
+        let autoMode = false;
+        let autoInt;
         document.getElementById('autoBtn').onclick = () => {
-            setInterval(() => {
-                createPlant(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
-            }, 1000);
+            autoMode = !autoMode;
+            if(autoMode) {
+                autoInt = setInterval(() => createFlower(Math.random() * window.innerWidth), 400);
+                document.getElementById('autoBtn').innerText = "⏹ Stop Bloom";
+            } else {
+                clearInterval(autoInt);
+                document.getElementById('autoBtn').innerText = "✨ Auto Bloom";
+            }
         };
 
         document.getElementById('msgBtn').onclick = () => {
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('loveNote').style.display = 'block';
         };
+
+        function closeModal() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('loveNote').style.display = 'none';
+        }
     </script>
 </body>
 </html>
