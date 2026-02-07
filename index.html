@@ -3,118 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower Garden for Deepali</title>
+    <title>A Garden for Deepali 🌸</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400&display=swap');
+
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #000; overflow: hidden; font-family: sans-serif;
+            background: #050505; overflow: hidden;
+            font-family: 'Poppins', sans-serif;
         }
 
-        #garden-container { position: relative; width: 100%; height: 100%; }
+        /* Front Branding */
+        .hero {
+            position: absolute; top: 15%; width: 100%; text-align: center;
+            color: white; z-index: 10; pointer-events: none;
+        }
+        .hero h1 { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: 3.5rem; color: #ff75a0; margin: 0;
+            text-shadow: 0 0 20px rgba(255, 117, 160, 0.6);
+        }
+        .hero p { font-style: italic; opacity: 0.8; font-size: 0.9rem; margin-top: 10px; }
 
-        /* Stem Styling */
+        /* Stem & Flower Logic */
         .stem {
-            position: absolute;
-            background: linear-gradient(to top, #1a4301, #2d6a4f);
-            width: 3px;
-            bottom: 0;
+            position: absolute; bottom: 0; width: 3px;
+            background: linear-gradient(to top, #132a13, #38b000);
             transform-origin: bottom center;
-            border-radius: 5px;
-            animation: growStem 2s ease-out forwards;
+            animation: growStem 2.5s ease-out forwards;
+            border-radius: 10px;
         }
 
         @keyframes growStem {
-            from { height: 0; opacity: 0; transform: scaleX(0.5) rotate(var(--r)); }
-            to { height: var(--h); opacity: 1; transform: scaleX(1) rotate(var(--r)); }
+            from { height: 0; opacity: 0; transform: rotate(var(--r)) scaleX(0.5); }
+            to { height: var(--h); opacity: 1; transform: rotate(var(--r)) scaleX(1); }
         }
 
-        /* Flower Head Styling (Glow Effect) */
         .flower-head {
-            position: absolute;
-            top: 0; left: 50%;
+            position: absolute; top: 0; left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            animation: bloom 1s ease-out 1.5s forwards;
+            animation: bloom 1.2s ease-out 1.8s forwards;
         }
 
         @keyframes bloom {
-            to { transform: translate(-50%, -50%) scale(1.2); }
+            to { transform: translate(-50%, -50%) scale(1.3); }
         }
 
         .petal {
-            position: absolute;
-            width: 40px; height: 60px;
-            background: var(--c);
-            border-radius: 50% 50% 10% 10%;
-            filter: blur(1px);
-            opacity: 0.8;
-            box-shadow: 0 0 15px var(--c);
-            transform-origin: bottom center;
+            position: absolute; width: 35px; height: 55px;
+            background: var(--c); border-radius: 50% 50% 15% 15%;
+            filter: blur(0.8px); opacity: 0.85;
+            box-shadow: 0 0 15px var(--c); transform-origin: bottom center;
         }
 
-        /* UI Buttons (Matching Screenshot) */
+        /* Screenshot Matching UI */
         .controls {
             position: fixed; bottom: 40px; width: 100%;
             display: flex; justify-content: center; gap: 15px; z-index: 100;
         }
-
         button {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white; padding: 12px 25px; border-radius: 30px;
-            backdrop-filter: blur(10px); font-size: 14px; cursor: pointer;
-            display: flex; align-items: center; gap: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white; padding: 14px 28px; border-radius: 40px;
+            backdrop-filter: blur(12px); font-size: 14px; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; gap: 8px;
         }
+        button:active { transform: scale(0.95); }
 
-        /* Hidden Message Card */
-        .modal {
-            display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); width: 80%; max-width: 300px;
-            background: white; border-radius: 20px; padding: 25px;
-            text-align: center; z-index: 1000; box-shadow: 0 0 40px #ff4d6d;
+        /* Meaningful Hidden Card */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.85);
+            z-index: 1000; backdrop-filter: blur(8px);
         }
-        .overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:900; }
+        .modal {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; max-width: 380px; background: #fff;
+            border-radius: 30px; padding: 40px 30px; text-align: center;
+            box-shadow: 0 20px 50px rgba(255, 77, 109, 0.3);
+        }
+        .modal h2 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2.2rem; margin-bottom: 15px; }
+        .modal p { color: #444; line-height: 1.8; font-size: 1rem; margin-bottom: 25px; }
+        .close-btn { background: #000; color: #fff; border: none; padding: 12px 30px; border-radius: 15px; width: 100%; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="garden-container"></div>
-
-    <div class="controls">
-        <button onclick="clearGarden()">🪄 Clear Garden</button>
-        <button id="autoBtn">✨ Auto Bloom</button>
-        <button id="msgBtn" style="border-color: #ff4d6d;">🎁 Hidden Note</button>
+    <div class="hero">
+        <h1>Deepali</h1>
+        <p>"Faasle ye batate hain ki hamari mohabbat kitni gehri hai..."</p>
     </div>
 
-    <div class="overlay" id="overlay"></div>
-    <div id="loveNote" class="modal">
-        <h2 style="color:#ff4d6d">For Deepali ❤️</h2>
-        <p>Door hoon par mera har ek khayal tumhare paas hai. Happy Rose Day My Love!</p>
-        <button onclick="closeModal()" style="background:#000; color:#fff; border:none; width:100%; margin-top:10px;">Close</button>
+    <div id="garden"></div>
+
+    <div class="controls">
+        <button onclick="clearGarden()">🪄 Clear</button>
+        <button id="autoBtn">✨ Auto Bloom</button>
+        <button onclick="showNote()" style="border-color: #ff4d6d; color: #ff4d6d;">💌 A Note for You</button>
+    </div>
+
+    <div class="modal-overlay" id="overlay">
+        <div class="modal">
+            <h2>For My Deepali ❤️</h2>
+            <p>
+                Duniya mein lakho phool hain, par mere liye tumhari muskurahat se pyaara kuch nahi. 
+                <br><br>
+                Dear Deepali real fhol to nahi de paya sorry Tum mere liye bhut important ho or abhi kuch time se tum bhut chup chup ho gayi ho hope ki sab 
+                thik ho tum mere se share nahi krti ho chize pta nahi kyu per muje tum per pura bharosa ha tum kar logi sab chiz abhi thodi muskil ha per sab thik ho jayega 
+                I Love You ❤️🫶💕💓 Bhut sara or I miss You Bhut Sara Bhut Sara Khas ab tum Mast ho jao or wapas se phele ki tara khul kr chize bolo mere se Or ha me hamesha tuamrr 
+                sath hu 🫂.. Happy Rose Day Boniiiiii.....😂
+                <br><br>
+                <b>I Love You Forever.</b>
+            </p>
+            <button class="close-btn" onclick="closeNote()">Suno... (Close)</button>
+        </div>
     </div>
 
     <script>
-        const container = document.getElementById('garden-container');
-        const colors = ['#ff4d6d', '#ff75a0', '#c8b6ff', '#ffd6ff', '#ffb703'];
+        const garden = document.getElementById('garden');
+        const colors = ['#ff4d6d', '#ff75a0', '#9d4edd', '#ff9e00', '#f72585'];
 
         function createFlower(x) {
-            const flower = document.createElement('div');
-            flower.className = 'plant';
-            
-            // Random Height and Rotation for Stem
-            const height = Math.random() * 50 + 40; // 40% to 90% of screen
-            const rotation = (Math.random() - 0.5) * 15; // Slight curve
-
             const stem = document.createElement('div');
             stem.className = 'stem';
+            
+            const h = Math.random() * 45 + 40; // 40 to 85vh
+            const r = (Math.random() - 0.5) * 25; // Random curve
+            
             stem.style.left = x + 'px';
-            stem.style.setProperty('--h', height + 'vh');
-            stem.style.setProperty('--r', rotation + 'deg');
+            stem.style.setProperty('--h', h + 'vh');
+            stem.style.setProperty('--r', r + 'deg');
 
             const flowerHead = document.createElement('div');
             flowerHead.className = 'flower-head';
             const color = colors[Math.floor(Math.random() * colors.length)];
 
-            // Create 6 petals for a full look
             for(let i=0; i<6; i++) {
                 const p = document.createElement('div');
                 p.className = 'petal';
@@ -123,45 +146,40 @@
                 flowerHead.appendChild(p);
             }
 
-            stem.appendChild(flowerHead);
-            container.appendChild(stem);
+            const center = document.createElement('div');
+            center.style = "width:12px; height:12px; background:#fff; border-radius:50%; position:absolute; top:-6px; left:-6px; box-shadow:0 0 10px #fff;";
+            flowerHead.appendChild(center);
 
-            // Auto-clean old flowers
+            stem.appendChild(flowerHead);
+            garden.appendChild(stem);
+
             setTimeout(() => {
                 stem.style.opacity = '0';
-                stem.style.transition = '2s';
-                setTimeout(() => stem.remove(), 2000);
-            }, 10000);
+                stem.style.transition = '3s';
+                setTimeout(() => stem.remove(), 3000);
+            }, 12000);
         }
 
         window.addEventListener('click', (e) => {
             if(e.target.tagName !== 'BUTTON') createFlower(e.clientX);
         });
 
-        function clearGarden() { container.innerHTML = ''; }
+        function clearGarden() { garden.innerHTML = ''; }
 
-        let autoMode = false;
         let autoInt;
-        document.getElementById('autoBtn').onclick = () => {
-            autoMode = !autoMode;
-            if(autoMode) {
-                autoInt = setInterval(() => createFlower(Math.random() * window.innerWidth), 400);
-                document.getElementById('autoBtn').innerText = "⏹ Stop Bloom";
+        document.getElementById('autoBtn').onclick = (e) => {
+            if(!autoInt) {
+                autoInt = setInterval(() => createFlower(Math.random() * window.innerWidth), 500);
+                e.target.innerText = "⏹ Stop Bloom";
             } else {
                 clearInterval(autoInt);
-                document.getElementById('autoBtn').innerText = "✨ Auto Bloom";
+                autoInt = null;
+                e.target.innerText = "✨ Auto Bloom";
             }
         };
 
-        document.getElementById('msgBtn').onclick = () => {
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('loveNote').style.display = 'block';
-        };
-
-        function closeModal() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('loveNote').style.display = 'none';
-        }
+        function showNote() { document.getElementById('overlay').style.display = 'block'; }
+        function closeNote() { document.getElementById('overlay').style.display = 'none'; }
     </script>
 </body>
 </html>
